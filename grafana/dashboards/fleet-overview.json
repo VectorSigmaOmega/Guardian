@@ -13,6 +13,27 @@
         "type": "prometheus",
         "uid": "guardian-prometheus"
       },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "content": "## Guardian Fleet Overview\nThis public dashboard shows the live control plane and the currently active monitored hosts. Alerts route through Alertmanager to Slack, and approved failure classes can trigger a runbook-driven remediation path.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.0",
+      "title": "Overview",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "guardian-prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -39,7 +60,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "id": 1,
       "options": {
@@ -96,7 +117,7 @@
         "h": 5,
         "w": 6,
         "x": 6,
-        "y": 0
+        "y": 4
       },
       "id": 2,
       "options": {
@@ -157,7 +178,7 @@
         "h": 5,
         "w": 6,
         "x": 12,
-        "y": 0
+        "y": 4
       },
       "id": 3,
       "options": {
@@ -218,7 +239,7 @@
         "h": 5,
         "w": 6,
         "x": 18,
-        "y": 0
+        "y": 4
       },
       "id": 4,
       "options": {
@@ -237,11 +258,11 @@
       },
       "targets": [
         {
-          "expr": "sum(guardian_app_websocket_connections)",
+          "expr": "sum(guardian_app_websocket_connections{job=\"fleet-python-exporter\",role=\"guardian\"})",
           "refId": "A"
         }
       ],
-      "title": "Live Connections",
+      "title": "Guardian Live Connections",
       "type": "stat"
     },
     {
@@ -273,7 +294,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "id": 5,
       "options": {
@@ -324,7 +345,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 5
+        "y": 9
       },
       "id": 6,
       "options": {
@@ -361,7 +382,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 17
       },
       "id": 7,
       "options": {
@@ -375,17 +396,17 @@
       },
       "targets": [
         {
-          "expr": "sum by (host) (guardian_app_active_rooms)",
-          "legendFormat": "{{host}}",
+          "expr": "sum by (host) (guardian_app_active_rooms{job=\"fleet-python-exporter\",role=\"guardian\"})",
+          "legendFormat": "{{host}} rooms",
           "refId": "A"
         },
         {
-          "expr": "sum by (host) (guardian_app_websocket_connections)",
+          "expr": "sum by (host) (guardian_app_websocket_connections{job=\"fleet-python-exporter\",role=\"guardian\"})",
           "legendFormat": "{{host}} websocket",
           "refId": "B"
         }
       ],
-      "title": "Collaboration Load",
+      "title": "Guardian Collaboration Load",
       "type": "timeseries"
     },
     {
@@ -403,7 +424,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 17
       },
       "id": 8,
       "options": {
@@ -417,17 +438,17 @@
       },
       "targets": [
         {
-          "expr": "sum by (host) (guardian_swiftbatch_queue_depth)",
+          "expr": "sum by (host) (guardian_swiftbatch_queue_depth{job=\"fleet-python-exporter\",role=\"swiftbatch\"})",
           "legendFormat": "{{host}} queue",
           "refId": "A"
         },
         {
-          "expr": "sum by (host) (guardian_swiftbatch_dlq_size)",
+          "expr": "sum by (host) (guardian_swiftbatch_dlq_size{job=\"fleet-python-exporter\",role=\"swiftbatch\"})",
           "legendFormat": "{{host}} dlq",
           "refId": "B"
         }
       ],
-      "title": "SwiftBatch Health",
+      "title": "SwiftBatch Queue Health",
       "type": "timeseries"
     },
     {
@@ -445,7 +466,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 25
       },
       "id": 9,
       "options": {
@@ -459,8 +480,8 @@
       },
       "targets": [
         {
-          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{job=\"fleet-node-exporter\", mode=\"idle\"}[5m])) * 100)",
-          "legendFormat": "{{instance}}",
+          "expr": "100 - (avg by (host) (rate(node_cpu_seconds_total{job=\"fleet-node-exporter\", mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "{{host}}",
           "refId": "A"
         }
       ],
@@ -482,7 +503,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 25
       },
       "id": 10,
       "options": {
@@ -497,7 +518,7 @@
       "targets": [
         {
           "expr": "(1 - (node_memory_MemAvailable_bytes{job=\"fleet-node-exporter\"} / node_memory_MemTotal_bytes{job=\"fleet-node-exporter\"})) * 100",
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{host}}",
           "refId": "A"
         }
       ],
@@ -507,7 +528,7 @@
   ],
   "refresh": "15s",
   "schemaVersion": 39,
-  "style": "light",
+  "style": "dark",
   "tags": [
     "guardian",
     "public"
@@ -523,6 +544,6 @@
   "timezone": "browser",
   "title": "Guardian Fleet Overview",
   "uid": "guardian-fleet-overview",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

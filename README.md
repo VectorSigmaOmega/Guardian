@@ -12,7 +12,6 @@ It demonstrates Prometheus + Alertmanager + Grafana observability, Ansible-drive
 Source-of-truth docs:
 - `docs/PRD.md`
 - `docs/ARCHITECTURE.md`
-- `docs/AGENT_BRIEF.md`
 
 ## Repository layout
 
@@ -60,18 +59,26 @@ docs/                PRD, architecture, SLO, MTTR, postmortem template
 
 1. Configure inventory in `ansible/inventory/hosts.ini`. Adding or removing monitored hosts is an inventory change followed by an Ansible run.
 2. Provide runtime secrets to the Ansible runner. For manual deploys, export the required names in your shell. Ansible writes them to `/opt/guardian/.env` on the control-plane VPS with `0600` permissions.
-3. Configure GitHub Actions repository settings if deploys will later run from a self-hosted or otherwise network-reachable runner:
+3. Manual deploy is the default operating path. GitHub-hosted runners cannot reach the fleet over SSH, so CI deploy remains disabled unless you later introduce a self-hosted or otherwise network-reachable runner.
+4. Configure GitHub Actions repository settings if deploys will later run from a self-hosted or otherwise network-reachable runner:
    Secrets:
    `ANSIBLE_SSH_PRIVATE_KEY`, `ANSIBLE_KNOWN_HOSTS`, `SLACK_WEBHOOK_URL`, `GRAFANA_ADMIN_PASSWORD`, `WEBHOOK_INTERNAL_TOKEN`, `GUARDIAN_HMAC_SECRET`
    Variables:
    `SLACK_CHANNEL`, `GRAFANA_HOST`, `WEBHOOK_HOST`
-4. Validate playbooks:
+5. Validate playbooks:
    ```bash
    uv run --with ansible-core ansible-playbook --syntax-check -i ansible/inventory/hosts.ini ansible/site.yml
    ```
-5. Apply playbook:
+6. Apply playbook:
    ```bash
    uv run --with ansible-core ansible-playbook -i ansible/inventory/hosts.ini ansible/site.yml
+   ```
+7. For the current live environment, the operator workflow is:
+   ```bash
+   set -a
+   source <(ssh guardian-skyserver 'sudo cat /opt/guardian/.env')
+   set +a
+   uv run --with ansible-core ansible-playbook --private-key ~/.ssh/guardian_deploy_ed25519 -i ansible/inventory/hosts.ini ansible/site.yml
    ```
 
 ## Demo drill path
