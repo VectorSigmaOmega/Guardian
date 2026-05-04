@@ -10,3 +10,7 @@ grafana-data/
 
 AWS-Key/
 *:Zone.Identifier
+
+# Local agent guidance; keep out of the public repository.
+docs/AGENT_BRIEF.md
+docs/AGENT_BEHAVIOUR_PLAYBOOK.md
