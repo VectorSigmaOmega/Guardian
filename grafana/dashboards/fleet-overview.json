@@ -197,7 +197,7 @@
       },
       "targets": [
         {
-          "expr": "sum(ALERTS{alertstate=\"firing\"}) or vector(0)",
+          "expr": "sum(ALERTS{alertstate=\"firing\",alertname!=\"Watchdog\"}) or vector(0)",
           "refId": "A"
         }
       ],
@@ -308,7 +308,7 @@
       },
       "targets": [
         {
-          "expr": "up{job=\"fleet-node-exporter\"}",
+          "expr": "max by (host, role) (up{job=\"fleet-node-exporter\",role=~\"guardian|swiftbatch\"})",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
@@ -359,7 +359,7 @@
       },
       "targets": [
         {
-          "expr": "up{job=\"fleet-python-exporter\"}",
+          "expr": "max by (host, role) (up{job=\"fleet-python-exporter\",role=~\"guardian|swiftbatch\"})",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
