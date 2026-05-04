@@ -123,7 +123,7 @@ The current build can operate with the two existing workload hosts while the cha
 | Auto-remediation | Custom Flask webhook + Bash | Transparent; whitelisted; trivial to read in interview |
 | Ingress | Caddy | Auto-TLS in 2 lines; demonstrates breadth (Nginx is on Collaborate) |
 | Configuration | Ansible | Industry standard; idempotent; SSH-only — no agent install |
-| Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without portfolio benefit; SwiftBatch already covers k8s |
+| Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without meaningful benefit here; SwiftBatch already covers k8s |
 | Hosting (control plane) | Self-managed VPS | Predictable low cost; simplest path for a dedicated 4 GB control plane |
 | Hosting (chaos host) | AWS Lightsail | Small, cheap, and already available in the current account setup |
 | Hosting (existing monitored hosts) | Reused existing Collaborate and SwiftBatch servers | Real workloads are more valuable than synthetic stand-ins |
@@ -212,7 +212,7 @@ Beyond these, the system is intentionally not designed to scale. Scaling would r
 
 Reaffirmed here because architecture is where these decisions get tested under pressure:
 
-- no high availability — a single control-plane VM is acceptable for a portfolio demo
+- no high availability — a single control-plane VM is acceptable for this scope
 - no horizontal scaling of Prometheus
 - no service mesh
 - no multi-cluster federation

@@ -4,7 +4,7 @@ This document is the working agreement for building Guardian. `docs/PRD.md` and 
 
 ## 1. Project Goal
 
-Build `Guardian` as a recruiter-facing and interviewer-readable portfolio project that demonstrates:
+Build `Guardian` as a live, reviewer-readable systems project that demonstrates:
 
 - fleet configuration management with Ansible
 - production-style monitoring with Prometheus, Alertmanager, and Grafana
@@ -14,7 +14,7 @@ The goal is not to build a general-purpose monitoring product. Do not add featur
 
 ## 2. Hard Constraints
 
-- Prioritise `DevOps/SRE portfolio signal` over product breadth.
+- Prioritise `DevOps/SRE systems signal` over product breadth.
 - Prioritise `boring, defensible implementation` over architectural novelty.
 - Deployment target: `one 4 GB self-managed control-plane VPS + three monitored Linux hosts`.
 - Public demo target: `public Grafana over HTTPS`, plus a recorded drill showing alert to remediation to recovery.
@@ -23,11 +23,11 @@ The goal is not to build a general-purpose monitoring product. Do not add featur
 
 ## 3. Project Positioning
 
-`Guardian` should look like `a disciplined junior-to-mid-level DevOps/SRE portfolio system with real operational thinking`, not `a half-productized startup dashboard or an overbuilt observability lab`.
+`Guardian` should look like `a disciplined DevOps/SRE systems project with real operational thinking`, not `a half-productized startup dashboard or an overbuilt observability lab`.
 
 One-paragraph story:
 
-> Guardian is a small but real monitoring and auto-remediation platform for a mixed Linux fleet. It configures hosts with Ansible, scrapes system and application metrics with Prometheus, alerts through Alertmanager to Slack, and auto-remediates one whitelisted failure class through a signed webhook and runbook. The project is built to be understandable to a recruiter in under 10 minutes and defensible in a technical interview.
+> Guardian is a small but real monitoring and auto-remediation platform for a mixed Linux fleet. It configures hosts with Ansible, scrapes system and application metrics with Prometheus, alerts through Alertmanager to Slack, and auto-remediates one whitelisted failure class through a signed webhook and runbook. The project is built to be understandable in a short review and defensible in a technical interview.
 
 Showcased capabilities:
 
@@ -63,7 +63,7 @@ If a tempting feature does not appear In Scope, treat it as Out of Scope.
 - Data retention: `Prometheus local retention around 15 days`; no long-term storage in MVP
 - Safety controls: `runbook whitelist`, bounded input validation on webhook payloads, SSH key-only access, minimal exposed ports
 
-The recruiter experience, in order:
+The public review experience, in order:
 
 1. open the README and understand the system in under 10 minutes
 2. open the live Grafana URL and see real host and application metrics
@@ -171,14 +171,14 @@ If the alert/remediation loop or public Grafana is missing, MVP is not done.
 ## 15. Instructions for the Next Agent
 
 1. Treat this brief plus `docs/PRD.md` and `docs/ARCHITECTURE.md` as the active contract.
-2. Do not widen scope beyond the current portfolio goals.
+2. Do not widen scope beyond the current project goals.
 3. Prefer small, defensible implementation choices.
 4. Keep the deployment story provider-simple and Ansible-driven.
 5. Keep Loki out of MVP unless the source-of-truth docs are explicitly changed.
 6. Do not invent a custom UI or console for Guardian during MVP.
 7. Preserve the mixed-host reality: pre-existing workload hosts are monitored as real systems rather than rebuilt for infrastructure purity.
 8. If a plan/design detail is vague enough to change implementation meaningfully, stop and force clarification before coding.
-9. Optimise for a recruiter-comprehensible end-to-end demo over extra features.
+9. Optimise for a comprehensible end-to-end demo over extra features.
 
 ## 16. Anti-Scope-Creep Rule
 

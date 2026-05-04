@@ -81,7 +81,7 @@ Before implementation starts, the agent should also confirm:
 - frontend strategy is chosen
 - observability expectations are chosen
 - CI/CD expectations are chosen
-- for portfolio work, the public demo expectations are chosen
+- for public-demo work, the public demo expectations are chosen
 
 ## 4. Make The Smallest Correct Change
 
@@ -259,7 +259,7 @@ Agents should actively resist "while we’re here" additions unless they materia
 - demo clarity
 - security or operational safety
 
-This is especially important in portfolio and MVP projects.
+This is especially important in tightly scoped MVP projects.
 
 A project looks stronger when it finishes a sharp, well-executed scope than when it accumulates random extra features.
 

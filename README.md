@@ -1,6 +1,6 @@
 # Guardian
 
-Guardian is a portfolio-focused monitoring and auto-remediation system for a small Linux fleet.  
+Guardian is a monitoring and auto-remediation system for a small Linux fleet.  
 It demonstrates Prometheus + Alertmanager + Grafana observability, Ansible-driven configuration, and a controlled webhook runbook loop.
 
 ## Architecture at a glance
@@ -59,8 +59,8 @@ docs/                PRD, architecture, SLO, MTTR, postmortem template
 ## Deployment path
 
 1. Configure inventory in `ansible/inventory/hosts.ini`. Adding or removing monitored hosts is an inventory change followed by an Ansible run.
-2. Provide runtime secrets to the Ansible runner. For GitHub Actions deploys, use repository secrets/variables; for manual deploys, export the same names in your shell. Ansible writes them to `/opt/guardian/.env` on the control-plane VPS with `0600` permissions.
-3. Configure GitHub Actions repository settings if deploys will run from CI:
+2. Provide runtime secrets to the Ansible runner. For manual deploys, export the required names in your shell. Ansible writes them to `/opt/guardian/.env` on the control-plane VPS with `0600` permissions.
+3. Configure GitHub Actions repository settings if deploys will later run from a self-hosted or otherwise network-reachable runner:
    Secrets:
    `ANSIBLE_SSH_PRIVATE_KEY`, `ANSIBLE_KNOWN_HOSTS`, `SLACK_WEBHOOK_URL`, `GRAFANA_ADMIN_PASSWORD`, `WEBHOOK_INTERNAL_TOKEN`, `GUARDIAN_HMAC_SECRET`
    Variables:

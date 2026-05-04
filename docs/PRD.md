@@ -4,11 +4,11 @@
 
 Guardian is an automated infrastructure monitoring platform that observes a small fleet of Linux hosts, alerts on anomalies, and auto-remediates a defined set of failure classes via webhook-triggered runbooks.
 
-This is a **portfolio project**, not a product. Its purpose is to demonstrate DevOps and SRE competence to recruiters within a 10-minute repository review. It will not be commercialised, will not acquire users, and will not be extended into a general-purpose monitoring solution.
+This is a focused engineering demonstration, not a product. Its purpose is to demonstrate DevOps and SRE competence through a concise repository review and live system. It will not be commercialised, will not acquire users, and will not be extended into a general-purpose monitoring solution.
 
 ## 2. Primary Goal
 
-Produce a single GitHub repository plus a public live demo that, when reviewed by a DevOps/SRE recruiter, conveys:
+Produce a single GitHub repository plus a public live demo that conveys:
 
 - production-style observability (Prometheus, Alertmanager, Grafana)
 - configuration management at fleet scale (Ansible)
@@ -23,7 +23,7 @@ The repository is read by two audiences. Both must succeed.
 
 | Persona | Time spent | Needs |
 |---|---|---|
-| Recruiter / engineering manager | 60–600 s | README clarity, architecture diagram, live link, demo GIF, healthy folder structure |
+| Engineering manager / quick reviewer | 60–600 s | README clarity, architecture diagram, live link, demo GIF, healthy folder structure |
 | Senior engineer / interviewer | 10–30 min | Code quality, defensible decisions, evidence of tradeoff awareness |
 
 ## 4. Goals (Measurable)
@@ -117,7 +117,7 @@ The following will not be implemented, even as stretch goals:
 
 ## 9. Success Criteria
 
-The project is considered successful if a recruiter clicking the repository link can, within 10 minutes:
+The project is considered successful if a reviewer clicking the repository link can, within 10 minutes:
 
 1. understand what the system does from the README
 2. reach the live Grafana dashboard
