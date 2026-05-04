@@ -8,7 +8,8 @@ User=guardian-exporter
 Group=guardian-exporter
 Environment=GUARDIAN_EXPORTER_PORT={{ python_exporter_port | default(8000) }}
 Environment=GUARDIAN_EXPORTER_STATE_FILE=/opt/guardian-exporter/state/sample_metrics.json
-ExecStart=/opt/guardian-exporter/venv/bin/python -m guardian_exporter.app
+Environment=PYTHONPATH=/opt/guardian-exporter/app/src
+ExecStart=/usr/bin/python3 -m guardian_exporter.app
 Restart=always
 RestartSec=5
 

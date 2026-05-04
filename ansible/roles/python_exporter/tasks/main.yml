@@ -3,8 +3,8 @@
   ansible.builtin.package:
     name:
       - python3
-      - python3-pip
-      - python3-venv
+      - python3-flask
+      - python3-prometheus-client
     state: present
 
 - name: Ensure exporter service group exists
@@ -54,12 +54,6 @@
     group: guardian-exporter
     mode: "0644"
 
-- name: Install exporter into virtual environment
-  ansible.builtin.pip:
-    name: /opt/guardian-exporter/app
-    virtualenv: /opt/guardian-exporter/venv
-    virtualenv_command: python3 -m venv
-
 - name: Install exporter systemd unit
   ansible.builtin.template:
     src: guardian-exporter.service.j2
@@ -69,7 +63,8 @@
     mode: "0644"
 
 - name: Ensure exporter service is enabled and running
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: guardian-exporter
     enabled: true
     state: restarted
+    daemon_reload: true

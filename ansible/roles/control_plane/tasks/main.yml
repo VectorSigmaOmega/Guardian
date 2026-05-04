@@ -66,10 +66,17 @@
     mode: preserve
   loop:
     - prometheus
-    - alertmanager
     - grafana
     - webhook
     - exporter
+
+- name: Render Alertmanager configuration
+  ansible.builtin.template:
+    src: alertmanager.yml.j2
+    dest: /opt/guardian/alertmanager/alertmanager.yml
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Render node exporter service discovery targets
   ansible.builtin.template:
