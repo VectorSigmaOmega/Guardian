@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 .env
 grafana-data/
+.playwright-cli/
 
 
 AWS-Key/
