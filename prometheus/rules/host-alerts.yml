@@ -1,0 +1,31 @@
+groups:
+  - name: guardian-core-alerts
+    rules:
+      - alert: Watchdog
+        expr: vector(1)
+        labels:
+          severity: none
+        annotations:
+          summary: Watchdog always firing
+          description: This alert confirms Alertmanager routing is alive.
+
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: warning
+          auto_remediable: "false"
+        annotations:
+          summary: Scrape target down
+          description: "Target {{ $labels.instance }} has been down for more than 2 minutes."
+
+      - alert: HighCPU
+        expr: 100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[2m]))) > 85
+        for: 2m
+        labels:
+          severity: critical
+          auto_remediable: "true"
+        annotations:
+          summary: Host CPU saturation detected
+          description: "CPU usage on {{ $labels.instance }} exceeded 85% for more than 2 minutes."
+          runbook: runbooks/high_cpu.md

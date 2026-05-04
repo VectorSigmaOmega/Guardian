@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible-core
+
+      - name: Validate playbook syntax
+        run: ansible-playbook --syntax-check -i ansible/inventory/hosts.ini ansible/site.yml
+
+      - name: Refuse placeholder inventory
+        run: |
+          ! grep -Eq 'ansible_host=127\.0\.0\.1|ansible_connection=local|REPLACE_' ansible/inventory/hosts.ini
+
+      - name: Install deployment SSH key
+        env:
+          ANSIBLE_SSH_PRIVATE_KEY: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+          ANSIBLE_KNOWN_HOSTS: ${{ secrets.ANSIBLE_KNOWN_HOSTS }}
+        run: |
+          test -n "$ANSIBLE_SSH_PRIVATE_KEY"
+          test -n "$ANSIBLE_KNOWN_HOSTS"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$ANSIBLE_SSH_PRIVATE_KEY" > ~/.ssh/guardian_deploy
+          printf '%s\n' "$ANSIBLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/guardian_deploy
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Apply playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "true"
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL || '#guardian-alerts' }}
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+          WEBHOOK_INTERNAL_TOKEN: ${{ secrets.WEBHOOK_INTERNAL_TOKEN }}
+          GUARDIAN_HMAC_SECRET: ${{ secrets.GUARDIAN_HMAC_SECRET }}
+          GRAFANA_HOST: ${{ vars.GRAFANA_HOST }}
+          WEBHOOK_HOST: ${{ vars.WEBHOOK_HOST }}
+        run: ansible-playbook --private-key ~/.ssh/guardian_deploy -i ansible/inventory/hosts.ini ansible/site.yml

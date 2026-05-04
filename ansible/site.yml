@@ -1,0 +1,15 @@
+---
+- name: Configure monitored fleet exporters
+  hosts: monitored_fleet
+  become: true
+  roles:
+    - role: common
+    - role: node_exporter
+    - role: python_exporter
+
+- name: Configure control plane
+  hosts: control_plane
+  become: true
+  roles:
+    - role: common
+    - role: control_plane

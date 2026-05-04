@@ -1,0 +1,101 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - ./prometheus/targets:/etc/prometheus/targets:ro
+    networks:
+      - guardian
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --config.expand-env
+    environment:
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+      SLACK_CHANNEL: ${SLACK_CHANNEL}
+      WEBHOOK_INTERNAL_TOKEN: ${WEBHOOK_INTERNAL_TOKEN}
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - guardian
+
+  grafana:
+    image: grafana/grafana-oss:11.1.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - guardian
+
+  webhook:
+    build:
+      context: ./webhook
+    environment:
+      GUARDIAN_HMAC_SECRET: ${GUARDIAN_HMAC_SECRET}
+      GUARDIAN_INTERNAL_TOKEN: ${WEBHOOK_INTERNAL_TOKEN}
+      GUARDIAN_RUNBOOK_MAP: /app/config/runbook_map.json
+      GUARDIAN_RUNBOOKS_DIR: /app/runbooks
+      GUARDIAN_RUNBOOK_TIMEOUT_SECONDS: "60"
+    volumes:
+      - ./webhook/config:/app/config:ro
+      - ./webhook/runbooks:/app/runbooks:ro
+    networks:
+      - guardian
+
+  exporter:
+    build:
+      context: ./exporter
+    environment:
+      GUARDIAN_EXPORTER_PORT: "8000"
+      GUARDIAN_EXPORTER_STATE_FILE: /app/state/sample_metrics.json
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./exporter/state:/app/state:ro
+    networks:
+      - guardian
+
+  caddy:
+    image: caddy:2.8.4
+    depends_on:
+      - grafana
+      - webhook
+    environment:
+      GRAFANA_HOST: ${GRAFANA_HOST}
+      WEBHOOK_HOST: ${WEBHOOK_HOST}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - guardian
+
+volumes:
+  grafana-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  guardian:
+    driver: bridge

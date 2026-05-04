@@ -1,0 +1,13 @@
+{$GRAFANA_HOST:grafana.localtest.me} {
+	reverse_proxy grafana:3000
+}
+
+{$WEBHOOK_HOST:webhook.localtest.me} {
+	handle /remediate {
+		reverse_proxy webhook:5000
+	}
+
+	handle {
+		respond 404
+	}
+}

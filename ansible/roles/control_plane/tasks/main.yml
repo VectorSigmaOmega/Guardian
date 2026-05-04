@@ -1,0 +1,94 @@
+---
+- name: Ensure control-plane directory exists
+  ansible.builtin.file:
+    path: /opt/guardian
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Validate required control-plane environment
+  ansible.builtin.assert:
+    that:
+      - lookup('ansible.builtin.env', item) | length > 0
+    fail_msg: "{{ item }} must be set in the Ansible runner environment"
+  loop:
+    - SLACK_WEBHOOK_URL
+    - GRAFANA_ADMIN_PASSWORD
+    - WEBHOOK_INTERNAL_TOKEN
+    - GUARDIAN_HMAC_SECRET
+    - GRAFANA_HOST
+    - WEBHOOK_HOST
+
+- name: Install Docker runtime packages
+  ansible.builtin.package:
+    name:
+      - docker.io
+      - docker-compose-v2
+    state: present
+
+- name: Ensure Docker service is running
+  ansible.builtin.service:
+    name: docker
+    enabled: true
+    state: started
+
+- name: Copy docker-compose file to control plane
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../docker-compose.yml"
+    dest: /opt/guardian/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy Caddyfile to control plane
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../Caddyfile"
+    dest: /opt/guardian/Caddyfile
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Render Docker Compose environment file
+  ansible.builtin.template:
+    src: env.j2
+    dest: /opt/guardian/.env
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Copy control-plane service configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../{{ item }}"
+    dest: /opt/guardian/
+    owner: root
+    group: root
+    mode: preserve
+  loop:
+    - prometheus
+    - alertmanager
+    - grafana
+    - webhook
+    - exporter
+
+- name: Render node exporter service discovery targets
+  ansible.builtin.template:
+    src: node-exporter.yml.j2
+    dest: /opt/guardian/prometheus/targets/node-exporter.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Render Python exporter service discovery targets
+  ansible.builtin.template:
+    src: python-exporter.yml.j2
+    dest: /opt/guardian/prometheus/targets/python-exporter.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start control-plane stack
+  ansible.builtin.command:
+    cmd: docker compose up -d --build
+    chdir: /opt/guardian
+  changed_when: true

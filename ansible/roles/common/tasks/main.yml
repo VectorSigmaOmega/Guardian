@@ -1,0 +1,7 @@
+---
+- name: Install common base packages
+  ansible.builtin.package:
+    name:
+      - ca-certificates
+      - curl
+    state: present

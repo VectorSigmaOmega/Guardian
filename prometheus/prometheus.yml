@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - prometheus:9090
+
+  - job_name: alertmanager
+    static_configs:
+      - targets:
+          - alertmanager:9093
+
+  - job_name: exporter
+    static_configs:
+      - targets:
+          - exporter:8000
+
+  - job_name: fleet-node-exporter
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/node-exporter.yml
+
+  - job_name: fleet-python-exporter
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/python-exporter.yml
+
+  - job_name: webhook
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - webhook:5000

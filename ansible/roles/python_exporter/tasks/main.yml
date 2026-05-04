@@ -1,0 +1,75 @@
+---
+- name: Install Python exporter runtime packages
+  ansible.builtin.package:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+    state: present
+
+- name: Ensure exporter service group exists
+  ansible.builtin.group:
+    name: guardian-exporter
+    system: true
+    state: present
+
+- name: Ensure exporter service user exists
+  ansible.builtin.user:
+    name: guardian-exporter
+    group: guardian-exporter
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+    state: present
+
+- name: Ensure exporter install directory exists
+  ansible.builtin.file:
+    path: /opt/guardian-exporter
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Ensure exporter state directory exists
+  ansible.builtin.file:
+    path: /opt/guardian-exporter/state
+    state: directory
+    owner: guardian-exporter
+    group: guardian-exporter
+    mode: "0755"
+
+- name: Copy exporter application source
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../exporter/"
+    dest: /opt/guardian-exporter/app/
+    owner: root
+    group: root
+    mode: preserve
+
+- name: Place exporter state seed file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../exporter/state/sample_metrics.json"
+    dest: /opt/guardian-exporter/state/sample_metrics.json
+    owner: guardian-exporter
+    group: guardian-exporter
+    mode: "0644"
+
+- name: Install exporter into virtual environment
+  ansible.builtin.pip:
+    name: /opt/guardian-exporter/app
+    virtualenv: /opt/guardian-exporter/venv
+    virtualenv_command: python3 -m venv
+
+- name: Install exporter systemd unit
+  ansible.builtin.template:
+    src: guardian-exporter.service.j2
+    dest: /etc/systemd/system/guardian-exporter.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure exporter service is enabled and running
+  ansible.builtin.service:
+    name: guardian-exporter
+    enabled: true
+    state: restarted

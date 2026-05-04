@@ -1,0 +1,11 @@
+{% if groups.get('monitored_fleet', []) | length == 0 %}
+[]
+{% else %}
+{% for host in groups.get('monitored_fleet', []) %}
+- targets:
+    - "{{ hostvars[host].ansible_host | default(host) }}:{{ hostvars[host].python_exporter_port | default(8000) }}"
+  labels:
+    host: "{{ host }}"
+    role: "{{ hostvars[host].guardian_role | default('workload') }}"
+{% endfor %}
+{% endif %}
