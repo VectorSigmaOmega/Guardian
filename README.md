@@ -101,7 +101,7 @@ Record timings in `docs/MTTR.md` after each drill.
 
 The current live inventory is:
 - `guardian-host`
-- `swiftbatch-host`
+- `photon-host`
 - `drill-host`
 
 `collaborate-host` is intentionally parked until its scrape path is moved behind a stable route or tunnel.

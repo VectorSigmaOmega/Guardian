@@ -58,10 +58,10 @@ The following are explicitly out of scope and will not be added regardless of ho
 ### FR1 — Monitored Fleet
 The MVP shall monitor at least three hosts:
 - one host running a real workload (the deployed Collaborate whiteboard service)
-- one host running a representative workload (SwiftBatch demo or stub)
+- one host running a representative workload (Photon demo or stub)
 - one dedicated drill host that can be stressed on demand for drills
 
-The current live build runs `guardian-host`, `swiftbatch-host`, and `drill-host`. Hosts are managed through Ansible inventory and Prometheus file-based service discovery so hosts can be added or removed after deployment without code changes.
+The current live build runs `guardian-host`, `photon-host`, and `drill-host`. Hosts are managed through Ansible inventory and Prometheus file-based service discovery so hosts can be added or removed after deployment without code changes.
 
 ### FR2 — Metrics Collection
 Each monitored host shall expose:

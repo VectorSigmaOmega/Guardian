@@ -2,8 +2,7 @@
   "active_rooms": 8,
   "websocket_connections": 41,
   "events_per_second": 12.5,
-  "swiftbatch_queue_depth": 9,
-  "swiftbatch_worker_count": 4,
-  "swiftbatch_dlq_size": 0
+  "photon_queue_depth": 9,
+  "photon_worker_count": 4,
+  "photon_dlq_size": 0
 }
-

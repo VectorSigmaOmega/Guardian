@@ -24,7 +24,7 @@ Current shape:
 guardian-control ansible_host=<CONTROL_PLANE_IP> ansible_user=<DEPLOY_USER>
 
 [monitored_fleet]
-swiftbatch-host ansible_host=<SWIFTBATCH_IP> ansible_user=<DEPLOY_USER> guardian_role=swiftbatch node_exporter_port=9100 python_exporter_port=8000
+photon-host ansible_host=<PHOTON_IP> ansible_user=<DEPLOY_USER> guardian_role=photon node_exporter_port=9100 python_exporter_port=8000
 guardian-host ansible_host=<GUARDIAN_IP> ansible_user=<DEPLOY_USER> guardian_role=guardian node_exporter_port=9100 python_exporter_port=8001
 drill-host ansible_host=<DRILL_IP> ansible_user=<DEPLOY_USER> guardian_role=drill node_exporter_port=9100 python_exporter_port=8000
 ```

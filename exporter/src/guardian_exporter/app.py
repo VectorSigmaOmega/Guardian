@@ -17,9 +17,9 @@ class MetricsSnapshot:
     active_rooms: float
     websocket_connections: float
     events_per_second: float
-    swiftbatch_queue_depth: float
-    swiftbatch_worker_count: float
-    swiftbatch_dlq_size: float
+    photon_queue_depth: float
+    photon_worker_count: float
+    photon_dlq_size: float
 
 
 def _to_float(field_name: str, value: Any) -> float:
@@ -37,13 +37,13 @@ def parse_snapshot(payload: Mapping[str, Any]) -> MetricsSnapshot:
             "websocket_connections", payload["websocket_connections"]
         ),
         events_per_second=_to_float("events_per_second", payload["events_per_second"]),
-        swiftbatch_queue_depth=_to_float(
-            "swiftbatch_queue_depth", payload["swiftbatch_queue_depth"]
+        photon_queue_depth=_to_float(
+            "photon_queue_depth", payload["photon_queue_depth"]
         ),
-        swiftbatch_worker_count=_to_float(
-            "swiftbatch_worker_count", payload["swiftbatch_worker_count"]
+        photon_worker_count=_to_float(
+            "photon_worker_count", payload["photon_worker_count"]
         ),
-        swiftbatch_dlq_size=_to_float("swiftbatch_dlq_size", payload["swiftbatch_dlq_size"]),
+        photon_dlq_size=_to_float("photon_dlq_size", payload["photon_dlq_size"]),
     )
 
 
@@ -78,19 +78,19 @@ def create_app(state_file: Path | None = None) -> Flask:
             "Current processed events per second",
             registry=registry,
         ),
-        "swiftbatch_queue_depth": Gauge(
-            "guardian_swiftbatch_queue_depth",
-            "Current SwiftBatch queue depth",
+        "photon_queue_depth": Gauge(
+            "guardian_photon_queue_depth",
+            "Current Photon queue depth",
             registry=registry,
         ),
-        "swiftbatch_worker_count": Gauge(
-            "guardian_swiftbatch_worker_count",
-            "Current SwiftBatch worker count",
+        "photon_worker_count": Gauge(
+            "guardian_photon_worker_count",
+            "Current Photon worker count",
             registry=registry,
         ),
-        "swiftbatch_dlq_size": Gauge(
-            "guardian_swiftbatch_dlq_size",
-            "Current SwiftBatch dead-letter queue size",
+        "photon_dlq_size": Gauge(
+            "guardian_photon_dlq_size",
+            "Current Photon dead-letter queue size",
             registry=registry,
         ),
     }
@@ -105,9 +105,9 @@ def create_app(state_file: Path | None = None) -> Flask:
         gauges["active_rooms"].set(snapshot.active_rooms)
         gauges["websocket_connections"].set(snapshot.websocket_connections)
         gauges["events_per_second"].set(snapshot.events_per_second)
-        gauges["swiftbatch_queue_depth"].set(snapshot.swiftbatch_queue_depth)
-        gauges["swiftbatch_worker_count"].set(snapshot.swiftbatch_worker_count)
-        gauges["swiftbatch_dlq_size"].set(snapshot.swiftbatch_dlq_size)
+        gauges["photon_queue_depth"].set(snapshot.photon_queue_depth)
+        gauges["photon_worker_count"].set(snapshot.photon_worker_count)
+        gauges["photon_dlq_size"].set(snapshot.photon_dlq_size)
         return Response(generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
 
     return app
@@ -119,4 +119,3 @@ app = create_app()
 if __name__ == "__main__":
     port = int(os.getenv("GUARDIAN_EXPORTER_PORT", "8000"))
     app.run(host="0.0.0.0", port=port)
-

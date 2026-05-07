@@ -13,7 +13,7 @@ This document describes **how** Guardian is built. For **what** it does and **wh
 │        node_exporter + custom_py_exporter                   │
 │          (active rooms, ws connections, events/s)           │
 │                                                             │
-│  VM-B: SwiftBatch demo stack (existing workload host)       │
+│  VM-B: Photon workload host                                 │
 │        node_exporter + custom_py_exporter                   │
 │          (queue depth, worker count, DLQ size)              │
 │                                                             │
@@ -69,7 +69,7 @@ The control-plane host is a new self-managed VPS with a minimum target of `4 GB 
 
 Per-host exporter responsibilities:
 
-- **SwiftBatch host** — queue depth, worker count, DLQ size, processing-duration histogram.
+- **Photon host** — queue depth, worker count, DLQ size, processing-duration histogram.
 - **Guardian host** — control-plane host with host-level metrics and a custom exporter.
 - **Drill host** — safe target for CPU stress drills and drill-only auto-remediation.
 
@@ -123,10 +123,10 @@ Per-host exporter responsibilities:
 | Auto-remediation | Custom Flask webhook + Bash | Transparent; whitelisted; trivial to read in interview |
 | Ingress | Caddy | Auto-TLS in 2 lines; demonstrates breadth (Nginx is on Collaborate) |
 | Configuration | Ansible | Industry standard; idempotent; SSH-only — no agent install |
-| Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without meaningful benefit here; SwiftBatch already covers k8s |
+| Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without meaningful benefit here; Photon already covers k8s |
 | Hosting (control plane) | Self-managed VPS | Predictable low cost; simplest path for a dedicated 4 GB control plane |
 | Hosting (drill host) | Self-managed VPS | Safe isolated target for repeatable drill execution |
-| Hosting (existing monitored hosts) | Reused existing Collaborate and SwiftBatch servers | Real workloads are more valuable than synthetic stand-ins |
+| Hosting (existing monitored hosts) | Reused existing Collaborate and Photon servers | Real workloads are more valuable than synthetic stand-ins |
 | CI/CD | GitHub Actions | Free for public repos; widely understood |
 
 Rejected alternatives are recorded in `docs/decisions/` when relevant.

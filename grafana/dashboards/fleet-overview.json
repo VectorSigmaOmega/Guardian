@@ -308,7 +308,7 @@
       },
       "targets": [
         {
-          "expr": "max by (host, role) (up{job=\"fleet-node-exporter\",role=~\"guardian|swiftbatch\"})",
+          "expr": "max by (host, role) (up{job=\"fleet-node-exporter\",role=~\"guardian|photon\"})",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
@@ -359,7 +359,7 @@
       },
       "targets": [
         {
-          "expr": "max by (host, role) (up{job=\"fleet-python-exporter\",role=~\"guardian|swiftbatch\"})",
+          "expr": "max by (host, role) (up{job=\"fleet-python-exporter\",role=~\"guardian|photon\"})",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
@@ -438,17 +438,17 @@
       },
       "targets": [
         {
-          "expr": "sum by (host) (guardian_swiftbatch_queue_depth{job=\"fleet-python-exporter\",role=\"swiftbatch\"})",
+          "expr": "sum by (host) (guardian_photon_queue_depth{job=\"fleet-python-exporter\",role=\"photon\"})",
           "legendFormat": "{{host}} queue",
           "refId": "A"
         },
         {
-          "expr": "sum by (host) (guardian_swiftbatch_dlq_size{job=\"fleet-python-exporter\",role=\"swiftbatch\"})",
+          "expr": "sum by (host) (guardian_photon_dlq_size{job=\"fleet-python-exporter\",role=\"photon\"})",
           "legendFormat": "{{host}} dlq",
           "refId": "B"
         }
       ],
-      "title": "SwiftBatch Queue Health",
+      "title": "Photon Queue Health",
       "type": "timeseries"
     },
     {
