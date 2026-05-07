@@ -30,6 +30,14 @@
     group: root
     mode: "0755"
 
+- name: Ensure exporter application directory exists
+  ansible.builtin.file:
+    path: /opt/guardian-exporter/app
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
 - name: Ensure exporter state directory exists
   ansible.builtin.file:
     path: /opt/guardian-exporter/state
@@ -38,13 +46,16 @@
     group: guardian-exporter
     mode: "0755"
 
-- name: Copy exporter application source
+- name: Copy exporter runtime files
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../exporter/"
-    dest: /opt/guardian-exporter/app/
+    src: "{{ playbook_dir }}/../exporter/{{ item }}"
+    dest: "/opt/guardian-exporter/app/{{ item }}"
     owner: root
     group: root
     mode: preserve
+  loop:
+    - pyproject.toml
+    - src
 
 - name: Place exporter state seed file
   ansible.builtin.copy:

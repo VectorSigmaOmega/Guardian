@@ -73,18 +73,71 @@
     group: root
     mode: "0600"
 
-- name: Copy control-plane service configuration
+- name: Ensure control-plane subdirectories exist
+  ansible.builtin.file:
+    path: "/opt/guardian/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - prometheus
+    - prometheus/rules
+    - prometheus/targets
+    - grafana
+    - webhook
+    - exporter
+
+- name: Copy Prometheus base configuration
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../{{ item }}"
-    dest: /opt/guardian/
+    src: "{{ playbook_dir }}/../prometheus/prometheus.yml"
+    dest: /opt/guardian/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: preserve
+
+- name: Copy Prometheus rule files
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../prometheus/rules/"
+    dest: /opt/guardian/prometheus/rules/
+    owner: root
+    group: root
+    mode: preserve
+
+- name: Copy Grafana configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../grafana/"
+    dest: /opt/guardian/grafana/
+    owner: root
+    group: root
+    mode: preserve
+
+- name: Copy webhook runtime files
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../webhook/{{ item }}"
+    dest: "/opt/guardian/webhook/{{ item }}"
     owner: root
     group: root
     mode: preserve
   loop:
-    - prometheus
-    - grafana
-    - webhook
-    - exporter
+    - Dockerfile
+    - app.py
+    - config
+    - pyproject.toml
+    - runbooks
+
+- name: Copy demo exporter runtime files
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../exporter/{{ item }}"
+    dest: "/opt/guardian/exporter/{{ item }}"
+    owner: root
+    group: root
+    mode: preserve
+  loop:
+    - Dockerfile
+    - pyproject.toml
+    - src
+    - state
 
 - name: Render Alertmanager configuration
   ansible.builtin.template:
