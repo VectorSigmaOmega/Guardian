@@ -2,7 +2,7 @@
 
 ## 1. Scope of this document
 
-This document describes **how** Guardian is built. For **what** it does and **why**, see `PRD.md`. For the working agreement governing how the build is executed, see `AGENT_BRIEF.md`.
+This document describes **how** Guardian is built. For **what** it does and **why**, see `PRD.md`. For the current operator path, see `DEPLOYMENT.md`.
 
 ## 2. High-Level Topology
 
@@ -17,8 +17,8 @@ This document describes **how** Guardian is built. For **what** it does and **wh
 │        node_exporter + custom_py_exporter                   │
 │          (queue depth, worker count, DLQ size)              │
 │                                                             │
-│  VM-C: Synthetic chaos host (AWS Lightsail)                 │
-│        node_exporter + stress-ng (on demand)                │
+│  VM-C: Drill host                                            │
+│        node_exporter + custom_py_exporter + stress-ng       │
 │                                                             │
 └──────────────────────────────┬──────────────────────────────┘
                                │ scrape (HTTPS / public internet with firewalling)
@@ -60,7 +60,7 @@ All control-plane services run via `docker-compose` on a single VM.
 
 The control-plane host is a new self-managed VPS with a minimum target of `4 GB RAM`.
 
-### 3.2 Monitored Fleet (MVP target: ≥3 VMs)
+### 3.2 Monitored Fleet (current live set: 3 hosts)
 
 | Component | Purpose |
 |---|---|
@@ -69,18 +69,18 @@ The control-plane host is a new self-managed VPS with a minimum target of `4 GB 
 
 Per-host exporter responsibilities:
 
-- **Collaborate host** — active rooms, websocket connections, events per second, room age distribution.
 - **SwiftBatch host** — queue depth, worker count, DLQ size, processing-duration histogram.
-- **Chaos host** — synthetic counters; primary purpose is being a stress target.
+- **Guardian host** — control-plane host with host-level metrics and a custom exporter.
+- **Drill host** — safe target for CPU stress drills and drill-only auto-remediation.
 
-The current build can operate with the two existing workload hosts while the chaos host is pending. The MVP is not done until the chaos host is added and monitored. Adding or removing monitored hosts is an inventory/configuration operation: update `ansible/inventory/hosts.ini`, run Ansible, and Prometheus consumes the rendered file-based service discovery targets.
+`collaborate-host` is currently parked because its scrape path is not stable from the control plane. Adding or removing monitored hosts is an inventory/configuration operation: update `ansible/inventory/hosts.ini`, run Ansible, and Prometheus consumes the rendered file-based service discovery targets.
 
 ### 3.3 Out-of-band
 
 | Service | Purpose |
 |---|---|
 | Slack incoming webhook | Alert delivery to the configured alert channel |
-| GitHub Actions | CI for exporter + lint, deploy via `ansible-playbook` on merge to main |
+| GitHub Actions | CI and optional future deploy path |
 | UptimeRobot (free tier) | External liveness check on public Grafana URL |
 | DNS provider | Records for `grafana.<domain>`, `webhook.<domain>` |
 
@@ -109,7 +109,7 @@ The current build can operate with the two existing workload hosts while the cha
 ### 4.3 Drill (failure injection)
 
 1. Operator runs `scripts/induce-cpu-spike.sh <host>`.
-2. `stress-ng` runs on the chaos host; CPU metric crosses threshold.
+2. `stress-ng` runs on the drill host; CPU metric crosses threshold.
 3. Standard alert lifecycle (4.2) triggers.
 4. Demo GIF captures the loop end-to-end.
 
@@ -125,7 +125,7 @@ The current build can operate with the two existing workload hosts while the cha
 | Configuration | Ansible | Industry standard; idempotent; SSH-only — no agent install |
 | Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without meaningful benefit here; SwiftBatch already covers k8s |
 | Hosting (control plane) | Self-managed VPS | Predictable low cost; simplest path for a dedicated 4 GB control plane |
-| Hosting (chaos host) | AWS Lightsail | Small, cheap, and already available in the current account setup |
+| Hosting (drill host) | Self-managed VPS | Safe isolated target for repeatable drill execution |
 | Hosting (existing monitored hosts) | Reused existing Collaborate and SwiftBatch servers | Real workloads are more valuable than synthetic stand-ins |
 | CI/CD | GitHub Actions | Free for public repos; widely understood |
 
@@ -146,8 +146,10 @@ ansible/  →  ansible-playbook -i inventory site.yml
 ### 6.2 Updates
 
 - **Control-plane apps** — `docker-compose pull && up -d`, orchestrated by Ansible.
-- **Exporter code** — GitHub Actions runs the playbook against fleet on merge to `main`.
+- **Exporter code** — updated through the same Ansible deploy path used for the fleet.
 - **Fleet membership** — adding/removing hosts is done by editing Ansible inventory and rerunning the playbook; the control-plane role renders Prometheus file-based service discovery target files.
+
+The current default deployment path is manual Ansible execution from a machine that already has SSH reachability to the fleet. GitHub-hosted runners are not the active deploy mechanism.
 
 The full system is reproducible from a bare cloud account in ≤30 minutes (NFR8).
 
@@ -195,7 +197,7 @@ Guardian monitors itself:
 | Runbook script fails | Webhook records non-zero exit | Operator investigates; alert remains firing until resolution |
 | Prometheus disk fills | `node_exporter` disk alert (self-monitoring) | Retention reduced; TSDB pruned |
 | Exporter exposes new metric | n/a | Backwards-compatible by Prometheus's data model |
-| Free tier suspended | UptimeRobot ping fails | Recreate the chaos host on a fallback provider and reapply Ansible inventory/playbooks; documented in README |
+| Drill host unavailable | Drill verification fails | Rebuild or replace the drill host, update inventory, and reapply Ansible inventory/playbooks; documented in README |
 
 ## 10. Capacity Limits (by design)
 
