@@ -139,6 +139,20 @@
     - src
     - state
 
+- name: Remove control-plane development artifacts
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/guardian/exporter/.venv
+    - /opt/guardian/exporter/.pytest_cache
+    - /opt/guardian/exporter/tests
+    - /opt/guardian/exporter/src/guardian_exporter/__pycache__
+    - /opt/guardian/webhook/.venv
+    - /opt/guardian/webhook/.pytest_cache
+    - /opt/guardian/webhook/tests
+    - /opt/guardian/webhook/__pycache__
+
 - name: Render Alertmanager configuration
   ansible.builtin.template:
     src: alertmanager.yml.j2

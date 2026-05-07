@@ -7,6 +7,9 @@ route:
   group_interval: 1m
   repeat_interval: 2h
   routes:
+    - receiver: blackhole
+      matchers:
+        - alertname="Watchdog"
     - receiver: remediation-webhook
       matchers:
         - auto_remediable="true"
@@ -14,6 +17,7 @@ route:
     - receiver: slack-notifications
 
 receivers:
+  - name: blackhole
   - name: slack-notifications
     slack_configs:
       - api_url: "{{ lookup('ansible.builtin.env', 'SLACK_WEBHOOK_URL') }}"

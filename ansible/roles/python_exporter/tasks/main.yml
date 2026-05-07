@@ -57,6 +57,16 @@
     - pyproject.toml
     - src
 
+- name: Remove exporter development artifacts from monitored hosts
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/guardian-exporter/app/.venv
+    - /opt/guardian-exporter/app/.pytest_cache
+    - /opt/guardian-exporter/app/tests
+    - /opt/guardian-exporter/app/src/guardian_exporter/__pycache__
+
 - name: Place exporter state seed file
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../exporter/state/sample_metrics.json"
