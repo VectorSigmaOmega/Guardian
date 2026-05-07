@@ -5,3 +5,10 @@
       - ca-certificates
       - curl
     state: present
+
+- name: Install drill host tooling
+  ansible.builtin.package:
+    name:
+      - stress-ng
+    state: present
+  when: guardian_role | default('') == 'drill'

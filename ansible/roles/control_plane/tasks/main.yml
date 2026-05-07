@@ -20,6 +20,14 @@
     - GRAFANA_HOST
     - WEBHOOK_HOST
 
+- name: Ensure webhook SSH secrets directory exists
+  ansible.builtin.file:
+    path: /opt/guardian/secrets/ssh
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
 - name: Install Docker runtime packages
   ansible.builtin.package:
     name:
@@ -53,6 +61,14 @@
   ansible.builtin.template:
     src: env.j2
     dest: /opt/guardian/.env
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Copy Guardian deploy key for drill remediation
+  ansible.builtin.copy:
+    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/.ssh/guardian_deploy_ed25519"
+    dest: /opt/guardian/secrets/ssh/guardian_deploy_ed25519
     owner: root
     group: root
     mode: "0600"

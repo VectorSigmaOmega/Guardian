@@ -9,6 +9,6 @@ fi
 HOST="$1"
 DURATION="${2:-120}"
 
-ssh "$HOST" "stress-ng --cpu 2 --timeout ${DURATION}s"
+# Saturate all visible CPUs so the instance-level average reliably breaches the alert threshold.
+ssh "$HOST" "stress-ng --cpu 0 --timeout ${DURATION}s"
 echo "CPU stress completed on ${HOST}"
-

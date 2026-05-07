@@ -54,12 +54,15 @@ services:
     environment:
       GUARDIAN_HMAC_SECRET: ${GUARDIAN_HMAC_SECRET}
       GUARDIAN_INTERNAL_TOKEN: ${WEBHOOK_INTERNAL_TOKEN}
+      GUARDIAN_DRILL_HOST: ${GUARDIAN_DRILL_HOST}
+      GUARDIAN_DRILL_SSH_USER: ${GUARDIAN_DRILL_SSH_USER}
       GUARDIAN_RUNBOOK_MAP: /app/config/runbook_map.json
       GUARDIAN_RUNBOOKS_DIR: /app/runbooks
       GUARDIAN_RUNBOOK_TIMEOUT_SECONDS: "60"
     volumes:
       - ./webhook/config:/app/config:ro
       - ./webhook/runbooks:/app/runbooks:ro
+      - ./secrets/ssh:/root/.ssh
     networks:
       - guardian
 
