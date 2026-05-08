@@ -35,7 +35,7 @@ SSH_OPTS=(
   -o StrictHostKeyChecking=accept-new
 )
 
-REMOTE_COMMAND=$'if pgrep -x stress-ng >/dev/null; then\n  pkill -INT -x stress-ng\n  echo "Stopped stress-ng on drill host."\nelse\n  echo "No stress-ng process found."\nfi'
+REMOTE_COMMAND=$'if sudo pgrep -x stress-ng >/dev/null; then\n  sudo pkill -INT -x stress-ng || true\n  sudo pkill -INT -f "^stress-ng-cpu" || true\n  echo "Stopped stress-ng on drill host."\nelse\n  echo "No stress-ng process found."\nfi'
 
 echo "Executing drill remediation on ${DRILL_SSH_USER}@${DRILL_HOST}"
 ssh "${SSH_OPTS[@]}" "${DRILL_SSH_USER}@${DRILL_HOST}" "${REMOTE_COMMAND}"
