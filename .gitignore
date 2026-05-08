@@ -5,13 +5,10 @@ __pycache__/
 .mypy_cache/
 .venv/
 .env
+.local/
 grafana-data/
 .playwright-cli/
 
 
 AWS-Key/
 *:Zone.Identifier
-
-# Local agent guidance; keep out of the public repository.
-docs/AGENT_BRIEF.md
-docs/AGENT_BEHAVIOUR_PLAYBOOK.md

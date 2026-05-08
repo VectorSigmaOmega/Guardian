@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import logging
 import os
 import subprocess
 from collections.abc import Mapping
@@ -14,6 +15,7 @@ from prometheus_client import CollectorRegistry, Counter, Histogram, generate_la
 from prometheus_client.exposition import CONTENT_TYPE_LATEST
 
 DEFAULT_BASE_DIR = Path(__file__).resolve().parent
+LOG_FIELD_LIMIT = 200
 
 
 def compute_hmac_signature(body: bytes, secret: str) -> str:
@@ -80,6 +82,12 @@ def execute_runbook(
     )
 
 
+def truncate_for_log(value: str, limit: int = LOG_FIELD_LIMIT) -> str:
+    if len(value) <= limit:
+        return value
+    return f"{value[:limit]}..."
+
+
 def create_app(
     runbook_map: dict[str, str] | None = None,
     runbooks_dir: Path | None = None,
@@ -88,6 +96,7 @@ def create_app(
     internal_token: str | None = None,
 ) -> Flask:
     app = Flask(__name__)
+    app.logger.setLevel(logging.INFO)
 
     runbook_map_path = Path(
         os.getenv(
@@ -149,6 +158,13 @@ def create_app(
         instance = labels.get("instance")
         target_instance = instance if isinstance(instance, str) else "unknown-instance"
 
+        app.logger.info(
+            "Processing remediation alert=%s instance=%s runbook=%s",
+            alert_name,
+            target_instance,
+            runbook_name,
+        )
+
         with duration_histogram.time():
             result = execute_runbook(script_path, target_instance, timeout_seconds)
 
@@ -162,7 +178,25 @@ def create_app(
         }
 
         if result.returncode == 0:
+            app.logger.info(
+                "Remediation completed alert=%s instance=%s runbook=%s exit_code=%s stdout=%r stderr=%r",
+                alert_name,
+                target_instance,
+                runbook_name,
+                result.returncode,
+                truncate_for_log(body["stdout"]),
+                truncate_for_log(body["stderr"]),
+            )
             return body, 200
+        app.logger.warning(
+            "Remediation failed alert=%s instance=%s runbook=%s exit_code=%s stdout=%r stderr=%r",
+            alert_name,
+            target_instance,
+            runbook_name,
+            result.returncode,
+            truncate_for_log(body["stdout"]),
+            truncate_for_log(body["stderr"]),
+        )
         return body, 502
 
     @app.get("/healthz")
