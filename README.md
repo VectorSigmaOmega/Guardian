@@ -56,6 +56,8 @@ docs/                PRD, architecture, SLO, MTTR, postmortem template
 - **Ansible lint:** `uv run --with ansible-core --with ansible-lint ansible-lint ansible/site.yml`
 - **Deploy syntax check:** `uv run --with ansible-core ansible-playbook --syntax-check -i ansible/inventory/hosts.ini ansible/site.yml`
 
+`webhook/uv.lock` and `exporter/uv.lock` are intentionally ignored. Guardian does not currently treat subproject `uv.lock` files as committed source of truth; local testing should use `uv run --project ...` and keep those lockfiles out of git.
+
 ## Deployment path
 
 The full operator guide is in `docs/DEPLOYMENT.md`. The short version is:

@@ -6,6 +6,8 @@ __pycache__/
 .venv/
 .env
 .local/
+webhook/uv.lock
+exporter/uv.lock
 grafana-data/
 .playwright-cli/
 
