@@ -1,4 +1,4 @@
-# Guardian
+<h1>&nbsp <img src="https://github.com/user-attachments/assets/1561a1d1-b8e1-4e25-8b3f-d36d416a0864" alt="Guardian logo" width="25" /> &nbsp Guardian</h1>
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Observability-E6522C?logo=prometheus&logoColor=white)](https://prometheus.io/)
