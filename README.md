@@ -9,7 +9,7 @@
 [![Deploy](https://img.shields.io/badge/Deploy-Manual-6C757D)](#deployment)
 [![Live Grafana](https://img.shields.io/badge/Live-Grafana-0A7CFF)](https://grafana.guardian.abhinash.dev/)
 
-Guardian is a monitoring and auto-remediation platform for a small Linux fleet. It combines Prometheus, Alertmanager, Grafana, Ansible, and controlled webhook runbooks to detect unhealthy conditions, notify operators, and execute bounded recovery actions.
+Guardian is a monitoring and auto-remediation platform for a Linux fleet. It combines Prometheus, Alertmanager, Grafana, Ansible, and controlled webhook runbooks to detect unhealthy conditions, notify operators, and execute bounded recovery actions.
 
 <img width="1840" height="899" alt="Screenshot 2026-05-10 160257" src="https://github.com/user-attachments/assets/c491b701-d0d2-4d52-8080-35743affade1" />
 
@@ -23,7 +23,7 @@ Guardian is a monitoring and auto-remediation platform for a small Linux fleet. 
 
 ## What Guardian Does
 
-- Collects host-level and application-level metrics from a small Linux fleet.
+- Collects host-level and application-level metrics from a Linux fleet.
 - Uses Prometheus and Alertmanager for rule evaluation and routing.
 - Sends alerts to Slack and a remediation webhook.
 - Executes whitelisted runbooks for safe, bounded recovery actions.
