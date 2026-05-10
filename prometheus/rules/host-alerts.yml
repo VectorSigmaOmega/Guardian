@@ -24,7 +24,7 @@ groups:
         for: 2m
         labels:
           severity: critical
-          auto_remediable: "true"
+          auto_remediable: "false"
         annotations:
           summary: Host CPU saturation detected
           description: "CPU usage on {{ $labels.instance }} exceeded 85% for more than 2 minutes."

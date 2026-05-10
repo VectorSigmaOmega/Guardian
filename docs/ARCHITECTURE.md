@@ -17,7 +17,7 @@ This document describes **how** Guardian is built. For **what** it does and **wh
 │        node_exporter + custom_py_exporter                   │
 │          (queue depth, worker count, DLQ size)              │
 │                                                             │
-│  VM-C: Drill host                                            │
+│  VM-C: Optional temporary drill host                        │
 │        node_exporter + custom_py_exporter + stress-ng       │
 │                                                             │
 └──────────────────────────────┬──────────────────────────────┘
@@ -71,7 +71,7 @@ Per-host exporter responsibilities:
 
 - **Photon host** — queue depth, worker count, DLQ size, processing-duration histogram.
 - **Guardian host** — control-plane host with host-level metrics and a custom exporter.
-- **Drill host** — safe target for CPU stress drills and drill-only auto-remediation.
+- **Optional drill host** — temporary target for CPU stress drills and drill-only auto-remediation when demo validation is needed.
 
 `collaborate-host` is currently parked because its scrape path is not stable from the control plane. Adding or removing monitored hosts is an inventory/configuration operation: update `ansible/inventory/hosts.ini`, run Ansible, and Prometheus consumes the rendered file-based service discovery targets.
 
@@ -109,7 +109,7 @@ Per-host exporter responsibilities:
 ### 4.3 Drill (failure injection)
 
 1. Operator runs `scripts/induce-cpu-spike.sh <host>`.
-2. `stress-ng` runs on the drill host; CPU metric crosses threshold.
+2. `stress-ng` runs on the temporary drill host; CPU metric crosses threshold.
 3. Standard alert lifecycle (4.2) triggers.
 4. Demo GIF captures the loop end-to-end.
 
@@ -125,7 +125,7 @@ Per-host exporter responsibilities:
 | Configuration | Ansible | Industry standard; idempotent; SSH-only — no agent install |
 | Container orchestrator | `docker-compose` (control plane) | k3s adds complexity without meaningful benefit here; Photon already covers k8s |
 | Hosting (control plane) | Self-managed VPS | Predictable low cost; simplest path for a dedicated 4 GB control plane |
-| Hosting (drill host) | Self-managed VPS | Safe isolated target for repeatable drill execution |
+| Hosting (temporary drill host) | Temporary self-managed VPS | Safe isolated target for repeatable drill execution |
 | Hosting (existing monitored hosts) | Reused existing Collaborate and Photon servers | Real workloads are more valuable than synthetic stand-ins |
 | CI/CD | GitHub Actions | Free for public repos; widely understood |
 
@@ -197,7 +197,7 @@ Guardian monitors itself:
 | Runbook script fails | Webhook records non-zero exit | Operator investigates; alert remains firing until resolution |
 | Prometheus disk fills | `node_exporter` disk alert (self-monitoring) | Retention reduced; TSDB pruned |
 | Exporter exposes new metric | n/a | Backwards-compatible by Prometheus's data model |
-| Drill host unavailable | Drill verification fails | Rebuild or replace the drill host, update inventory, and reapply Ansible inventory/playbooks; documented in README |
+| Temporary drill host unavailable | Drill verification fails | Rebuild or replace the temporary drill host, attach it in inventory, and reapply Ansible before running the demo |
 
 ## 10. Capacity Limits (by design)
 

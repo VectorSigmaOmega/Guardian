@@ -56,12 +56,12 @@ The following are explicitly out of scope and will not be added regardless of ho
 ## 6. Functional Requirements
 
 ### FR1 — Monitored Fleet
-The MVP shall monitor at least three hosts:
+The MVP shall monitor at least two real workload hosts:
 - one host running a real workload (the deployed Collaborate whiteboard service)
 - one host running a representative workload (Photon demo or stub)
-- one dedicated drill host that can be stressed on demand for drills
+- one temporary drill host that can be attached on demand for drills
 
-The current live build runs `guardian-host`, `photon-host`, and `drill-host`. Hosts are managed through Ansible inventory and Prometheus file-based service discovery so hosts can be added or removed after deployment without code changes.
+The current live build runs `guardian-host` and `photon-host`. A temporary drill host can be added through Ansible inventory when a demo drill is needed. Hosts are managed through Ansible inventory and Prometheus file-based service discovery so hosts can be added or removed after deployment without code changes.
 
 ### FR2 — Metrics Collection
 Each monitored host shall expose:
@@ -129,7 +129,7 @@ The project is considered successful if a reviewer clicking the repository link 
 
 MVP is complete when **all** of the following are true:
 
-- three monitored hosts are configured and monitored according to the documented architecture
+- at least two monitored workload hosts are configured and monitored according to the documented architecture
 - `node_exporter` and the custom Python exporter are installed via Ansible on the fleet
 - Prometheus scrapes all targets; UP for ≥24 h continuous
 - ≥3 alert rules are defined; ≥1 fires on demand and resolves on recovery
@@ -147,11 +147,11 @@ If any of the above is missing, the MVP is not done — no exceptions.
 
 | # | Question | Default until decided |
 |---|---|---|
-| OQ1 | Hosting: Oracle Cloud free tier vs Lightsail vs Hetzner | Resolved: control plane on a self-managed VPS, with workload hosts plus a dedicated drill host in the monitored fleet |
+| OQ1 | Hosting: Oracle Cloud free tier vs Lightsail vs Hetzner | Resolved: control plane on a self-managed VPS, with workload hosts plus an optional temporary drill host for demos |
 | OQ2 | Is the Guardian Console (Next.js) in scope? | No — post-MVP only, after DoD met |
 | OQ3 | Add Loki + Promtail for unified logs? | Yes if NFR1 is comfortably met; otherwise post-MVP |
 
-Open questions are resolved by editing this PRD and recording the decision in `docs/decisions/`. `OQ1` is no longer open and remains here only as a recorded resolved decision.
+Open questions are resolved by editing this PRD. `OQ1` is no longer open and remains here only as a recorded resolved decision.
 
 ## 12. Out-of-Scope Backlog (deliberately deferred)
 

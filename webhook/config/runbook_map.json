@@ -1,4 +1,3 @@
 {
-  "HighCPU": "stop-cpu-stress.sh",
   "ServiceDown": "restart-service.sh"
 }

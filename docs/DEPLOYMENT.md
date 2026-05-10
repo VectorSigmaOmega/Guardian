@@ -26,6 +26,11 @@ guardian-control ansible_host=<CONTROL_PLANE_IP> ansible_user=<DEPLOY_USER>
 [monitored_fleet]
 photon-host ansible_host=<PHOTON_IP> ansible_user=<DEPLOY_USER> guardian_role=photon node_exporter_port=9100 python_exporter_port=8000
 guardian-host ansible_host=<GUARDIAN_IP> ansible_user=<DEPLOY_USER> guardian_role=guardian node_exporter_port=9100 python_exporter_port=8001
+```
+
+Optional temporary drill host shape:
+
+```ini
 drill-host ansible_host=<DRILL_IP> ansible_user=<DEPLOY_USER> guardian_role=drill node_exporter_port=9100 python_exporter_port=8000
 ```
 
@@ -81,12 +86,6 @@ At deploy time, the control-plane role writes them to:
 with permissions:
 
 - `0600`
-
-The drill remediation path also copies the shared deploy SSH key to:
-
-- `/opt/guardian/secrets/ssh/guardian_deploy_ed25519`
-
-That key is used only by the webhook runbook path that remediates the drill host.
 
 ## 6. Manual deploy
 
@@ -153,11 +152,12 @@ Check control-plane containers:
 ssh guardian-skyserver "cd /opt/guardian && sudo docker compose ps"
 ```
 
-## 9. Drill preparation
+## 9. Optional drill preparation
 
 The CPU drill path depends on:
 
-- `stress-ng` installed on `drill-host`
+- a temporary host present in inventory with `guardian_role=drill`
+- `stress-ng` installed on that host
 - `HighCPU` alert loaded in Prometheus
 - webhook runbook `stop-cpu-stress.sh`
 - webhook container SSH access to the drill host
@@ -168,7 +168,7 @@ Trigger the drill:
 scripts/induce-cpu-spike.sh drill-skyserver 180
 ```
 
-The current remediation path for `HighCPU` is intentionally restricted to the configured drill host. It kills `stress-ng` and refuses non-drill hosts.
+The drill-only remediation path is not enabled in the steady-state live deployment. Re-enable it only while a temporary drill host is attached and remove it again after the demo.
 
 ## 10. CI and GitHub Actions
 

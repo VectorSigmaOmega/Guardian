@@ -49,13 +49,13 @@ Guardian is a monitoring and auto-remediation platform for a Linux fleet. It com
 
 Guardian includes a controlled failure-injection path for demonstration and validation:
 
-1. A drill host is placed under sustained synthetic CPU load with `stress-ng`.
+1. A temporary drill host is placed under sustained synthetic CPU load with `stress-ng`.
 2. The `HighCPU` alert fires after the configured hold period.
 3. Alertmanager sends the event to Slack and the remediation webhook.
 4. The webhook runs a drill-safe runbook that stops the synthetic load.
 5. CPU usage returns to normal and the alert clears.
 
-The current `HighCPU` remediation is intentionally scoped to a drill-safe host and stops synthetic `stress-ng`. In a real workload, the same pipeline would invoke a host-role-specific recovery action instead of a generic process kill.
+The live fleet no longer keeps a permanent drill host attached. The demo shown here was recorded against a temporary drill-safe host, and the current `HighCPU` remediation path is retired from active deployment. In a real workload, the same pipeline would invoke a host-role-specific recovery action instead of a generic process kill.
 
 
 

@@ -20,14 +20,6 @@
     - GRAFANA_HOST
     - WEBHOOK_HOST
 
-- name: Ensure webhook SSH secrets directory exists
-  ansible.builtin.file:
-    path: /opt/guardian/secrets/ssh
-    state: directory
-    owner: root
-    group: root
-    mode: "0700"
-
 - name: Install Docker runtime packages
   ansible.builtin.package:
     name:
@@ -61,14 +53,6 @@
   ansible.builtin.template:
     src: env.j2
     dest: /opt/guardian/.env
-    owner: root
-    group: root
-    mode: "0600"
-
-- name: Copy Guardian deploy key for drill remediation
-  ansible.builtin.copy:
-    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/.ssh/guardian_deploy_ed25519"
-    dest: /opt/guardian/secrets/ssh/guardian_deploy_ed25519
     owner: root
     group: root
     mode: "0600"
@@ -122,9 +106,31 @@
   loop:
     - Dockerfile
     - app.py
-    - config
     - pyproject.toml
-    - runbooks
+
+- name: Remove stale nested webhook runtime directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/guardian/webhook/config/config
+    - /opt/guardian/webhook/runbooks/runbooks
+
+- name: Copy webhook config directory contents
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../webhook/config/"
+    dest: /opt/guardian/webhook/config/
+    owner: root
+    group: root
+    mode: preserve
+
+- name: Copy webhook runbooks directory contents
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../webhook/runbooks/"
+    dest: /opt/guardian/webhook/runbooks/
+    owner: root
+    group: root
+    mode: preserve
 
 - name: Copy demo exporter runtime files
   ansible.builtin.copy:
@@ -144,6 +150,7 @@
     path: "{{ item }}"
     state: absent
   loop:
+    - /opt/guardian/secrets
     - /opt/guardian/exporter/.venv
     - /opt/guardian/exporter/.pytest_cache
     - /opt/guardian/exporter/tests
