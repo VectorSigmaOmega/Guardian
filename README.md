@@ -1,17 +1,12 @@
-<table>
-  <tr>
-    <td>
-      <img
-        src="https://github.com/user-attachments/assets/037fb352-793f-4b80-9ed6-cd3e8c0319eb"
-        alt="Guardian logo"
-        width="40"
-      />
-    </td>
-    <td>
-      <h1>Guardian</h1>
-    </td>
-  </tr>
-</table>
+<h1>
+  <img
+    src="https://github.com/user-attachments/assets/037fb352-793f-4b80-9ed6-cd3e8c0319eb"
+    alt="Guardian logo"
+    width="35"
+    align="center"
+  />
+  &nbsp;Guardian
+</h1>
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Observability-E6522C?logo=prometheus&logoColor=white)](https://prometheus.io/)
