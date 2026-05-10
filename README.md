@@ -49,6 +49,12 @@ Guardian includes a controlled failure-injection path for demonstration and vali
 
 The current `HighCPU` remediation is intentionally scoped to a drill-safe host and stops synthetic `stress-ng`. In a real workload, the same pipeline would invoke a host-role-specific recovery action instead of a generic process kill.
 
+
+
+https://github.com/user-attachments/assets/4fbb3552-21b8-4e7d-a1ee-3da2b6b61eeb
+
+
+
 ## Local Run
 
 1. Copy the environment template:
