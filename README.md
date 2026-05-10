@@ -33,7 +33,7 @@ Guardian is a monitoring and auto-remediation platform for a Linux fleet. It com
 
 - Collects host-level and application-level metrics from a Linux fleet.
 - Uses Prometheus and Alertmanager for rule evaluation and routing.
-- Sends alerts to Slack and a remediation webhook.
+- Sends live alerts to Slack and supports bounded webhook remediation paths.
 - Executes whitelisted runbooks for safe, bounded recovery actions.
 - Uses Ansible for inventory-driven host onboarding and control-plane rollout.
 
@@ -44,6 +44,16 @@ Guardian is a monitoring and auto-remediation platform for a Linux fleet. It com
 3. Alertmanager routes alerts to Slack and, when allowed, to the remediation webhook.
 4. The webhook selects a mapped runbook and executes it against the intended target.
 5. Grafana shows the fleet before, during, and after recovery.
+
+## Active Alerts
+
+The live deployment currently evaluates and routes these alert sources:
+
+- `TargetDown` fires when a monitored scrape target stays down for more than 2 minutes.
+- `HighCPU` fires when sustained host CPU usage exceeds 85% for more than 2 minutes.
+- `Watchdog` is always firing internally as an Alertmanager heartbeat and is intentionally not sent to Slack.
+
+In steady state, `TargetDown` and `HighCPU` both notify Slack. The recorded demo shows the same alerting pipeline with a temporary drill host attached to prove the remediation loop end to end.
 
 ## Demo Flow
 
