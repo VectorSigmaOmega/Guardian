@@ -1,4 +1,7 @@
-<h1>&nbsp <img src="https://github.com/user-attachments/assets/a3c2a825-00aa-449c-bec8-f61dd399e547" alt="Guardian logo" width="25" /> &nbsp Guardian</h1>
+<h1> &nbsp <img width="25" alt="geometric_g_logo_vector_letter_filled_white" src="https://github.com/user-attachments/assets/037fb352-793f-4b80-9ed6-cd3e8c0319eb" /> &nbsp Guardian</h1>
+
+
+
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Observability-E6522C?logo=prometheus&logoColor=white)](https://prometheus.io/)
