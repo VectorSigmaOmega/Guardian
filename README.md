@@ -11,6 +11,9 @@
 
 Guardian is a monitoring and auto-remediation platform for a small Linux fleet. It combines Prometheus, Alertmanager, Grafana, Ansible, and controlled webhook runbooks to detect unhealthy conditions, notify operators, and execute bounded recovery actions.
 
+<img width="1840" height="899" alt="Screenshot 2026-05-10 160257" src="https://github.com/user-attachments/assets/c491b701-d0d2-4d52-8080-35743affade1" />
+
+
 ## Live Links
 
 - Public Grafana: `https://grafana.guardian.abhinash.dev/`
