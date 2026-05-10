@@ -179,7 +179,10 @@ def create_app(
 
         if result.returncode == 0:
             app.logger.info(
-                "Remediation completed alert=%s instance=%s runbook=%s exit_code=%s stdout=%r stderr=%r",
+                (
+                    "Remediation completed alert=%s instance=%s runbook=%s "
+                    "exit_code=%s stdout=%r stderr=%r"
+                ),
                 alert_name,
                 target_instance,
                 runbook_name,
@@ -189,7 +192,10 @@ def create_app(
             )
             return body, 200
         app.logger.warning(
-            "Remediation failed alert=%s instance=%s runbook=%s exit_code=%s stdout=%r stderr=%r",
+            (
+                "Remediation failed alert=%s instance=%s runbook=%s "
+                "exit_code=%s stdout=%r stderr=%r"
+            ),
             alert_name,
             target_instance,
             runbook_name,

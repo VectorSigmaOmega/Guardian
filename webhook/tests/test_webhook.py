@@ -1,5 +1,5 @@
-import stat
 import logging
+import stat
 from pathlib import Path
 
 from app import compute_hmac_signature, create_app
@@ -85,8 +85,14 @@ def test_internal_remediation_logs_success(tmp_path: Path, monkeypatch, caplog) 
         )
 
     assert response.status_code == 200
-    assert "Processing remediation alert=HighCPU instance=demo-host:9100 runbook=restart.sh" in caplog.text
-    assert "Remediation completed alert=HighCPU instance=demo-host:9100 runbook=restart.sh exit_code=0" in caplog.text
+    assert (
+        "Processing remediation alert=HighCPU instance=demo-host:9100 "
+        "runbook=restart.sh" in caplog.text
+    )
+    assert (
+        "Remediation completed alert=HighCPU instance=demo-host:9100 "
+        "runbook=restart.sh exit_code=0" in caplog.text
+    )
 
 
 def test_unknown_alert_returns_400(tmp_path: Path, monkeypatch) -> None:
